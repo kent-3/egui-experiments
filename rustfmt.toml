@@ -1,0 +1,7 @@
+edition = "2021"                    # Specify the Rust edition
+max_width = 100                     # Set the maximum width for a single line
+tab_spaces = 4                      # Use 4 spaces for indentation instead of the default 2
+hard_tabs = false                   # Use spaces instead of tabs for indentation
+newline_style = "Unix"              # Set the newline style to Unix (use "Native" for the platform's default)
+reorder_imports = true              # Reorder imports alphabetically
+reorder_modules = true              # Reorder module declarations alphabetically

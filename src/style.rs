@@ -1,9 +1,11 @@
 use egui::style::{
-    Interaction, Margin, Selection, Spacing, Style, TextStyle, Visuals,
-    WidgetVisuals, Widgets,
+    Interaction, Margin, Selection, Spacing, Style, TextStyle, Visuals, WidgetVisuals, Widgets,
 };
 use egui::{vec2, Color32, FontData, FontDefinitions, FontFamily, FontId, FontTweak, Rounding};
-use epaint::{Shadow, Stroke, FontFamily::{Monospace, Proportional}};
+use epaint::{
+    FontFamily::{Monospace, Proportional},
+    Shadow, Stroke,
+};
 
 #[inline]
 pub fn heading2() -> TextStyle {
@@ -168,10 +170,7 @@ pub fn my_font_definitions() -> FontDefinitions {
     // Install my own font (maybe supporting non-latin characters):
     fonts.font_data.insert(
         "open_sans".to_owned(),
-        FontData::from_static(include_bytes!(
-            "../fonts/OpenSans-Regular.ttf"
-        ))
-        .tweak(FontTweak {
+        FontData::from_static(include_bytes!("../fonts/OpenSans-Regular.ttf")).tweak(FontTweak {
             scale: 1.0,
             y_offset_factor: -0.2,
             y_offset: 0.0,

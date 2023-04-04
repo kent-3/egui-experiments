@@ -2,8 +2,8 @@ use eframe::egui;
 
 #[allow(unused_imports)]
 use egui::{
-    Align2, Area, Frame, Margin, Rounding,
-    RichText, SidePanel, TopBottomPanel, CentralPanel, Vec2, Window, vec2, Color32
+    vec2, Align2, Area, CentralPanel, Color32, Frame, Margin, RichText, Rounding, SidePanel,
+    TopBottomPanel, Vec2, Window,
 };
 
 use crate::style::*;
@@ -14,7 +14,6 @@ use crate::style::*;
 pub struct TemplateApp {
     // #[serde(skip)]
     // svg_image: egui_extras::RetainedImage,
-
     welcome_window_open: bool,
     connect_window_open: bool,
     alert_window_open: bool,
@@ -171,15 +170,24 @@ impl eframe::App for TemplateApp {
                     .anchor(Align2::RIGHT_BOTTOM, Vec2::new(-8.0, 0.0))
                     .show(ctx, |ui| {
                         ui.horizontal(|ui| {
-                            ui.add(CustomHyperlink::from_label_and_url("Telegram", "https://t.me/AmberDAOscrt"));
-                            ui.add(CustomHyperlink::from_label_and_url("Twitter", "https://twitter.com/AmberDAO_"));
-                            ui.add(CustomHyperlink::from_label_and_url("GitHub", "https://github.com/kent-3/amber"));
+                            ui.add(CustomHyperlink::from_label_and_url(
+                                "Telegram",
+                                "https://t.me/AmberDAOscrt",
+                            ));
+                            ui.add(CustomHyperlink::from_label_and_url(
+                                "Twitter",
+                                "https://twitter.com/AmberDAO_",
+                            ));
+                            ui.add(CustomHyperlink::from_label_and_url(
+                                "GitHub",
+                                "https://github.com/kent-3/amber",
+                            ));
                             egui::widgets::global_dark_light_mode_switch(ui);
                         });
                     });
             });
 
-        change_animation_time(ctx, 1.0 / 6.0 );
+        change_animation_time(ctx, 1.0 / 6.0);
 
         SidePanel::right("right_panel")
             .resizable(true)
@@ -277,7 +285,6 @@ impl eframe::App for TemplateApp {
                     })
                 });
         });
-        
     }
 }
 
@@ -289,7 +296,7 @@ pub const LOREM_IPSUM: &str = "Lorem ipsum dolor sit amet, consectetur adipiscin
 // The normal Hyperlink only opens in a new tab if a keyboard modifer is active.
 // ui.add(CustomHyperlink::from_label_and_url("new tab", "about:blank"));
 
-use egui::{WidgetText, Ui, Widget, Response, Link};
+use egui::{Link, Response, Ui, Widget, WidgetText};
 
 #[must_use = "You should put this widget in an ui with `ui.add(widget);`"]
 pub struct CustomHyperlink {

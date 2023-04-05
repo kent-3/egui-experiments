@@ -43,7 +43,7 @@ impl Default for TemplateApp {
             connect_window_open: false,
             alert_window_open: false,
             right_panel_open: true,
-            left_panel_open: false,
+            left_panel_open: true,
             style_window_open: false,
         }
     }

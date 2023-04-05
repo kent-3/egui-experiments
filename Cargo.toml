@@ -13,8 +13,9 @@ eframe = { version = "0.21.3", default-features = false, features = [
     "glow",          # Use the glow rendering backend. Alternative: "wgpu".
     "persistence",   # Enable restoring app state when restarting the app.
 ] }
-# egui_extras = { version = "0.21.0", features = ["svg"] }
+egui_extras = { version = "0.21.0", features = ["svg", "image"] }
 epaint = { version= "0.21.0", default-features = false }
+image = { version = "0.24", features = ["jpeg", "png", "webp"] }
 
 # cosmwasm-std = { git = "https://github.com/scrtlabs/cosmwasm", tag = "v1.1.9-secret" }
 # secret-toolkit = { git = "https://github.com/scrtlabs/secret-toolkit", tag = "v0.8.0", default-features = false, features = ["utils"] }

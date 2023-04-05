@@ -12,27 +12,39 @@ use crate::style::*;
 #[derive(serde::Deserialize, serde::Serialize)]
 #[serde(default)] // if we add new fields, give them default values when deserializing old state
 pub struct TemplateApp {
-    // #[serde(skip)]
-    // svg_image: egui_extras::RetainedImage,
+    setting1: String,
+    setting2: String,
+    setting3: String,
+    slider_value: u8,
+    #[serde(skip)]
+    svg_image: egui_extras::RetainedImage,
     welcome_window_open: bool,
     connect_window_open: bool,
     alert_window_open: bool,
-    side_panel_open: bool,
+    right_panel_open: bool,
+    left_panel_open: bool,
+    style_window_open: bool,
 }
 
 impl Default for TemplateApp {
     fn default() -> Self {
         Self {
-            // svg_image: egui_extras::RetainedImage::from_svg_bytes_with_size(
-            //     "scrt.svg",
-            //     include_bytes!("scrt.svg"),
-            //     egui_extras::image::FitTo::Original,
-            // )
-            // .unwrap(),
+            setting1: "customizable value".to_owned(),
+            setting2: "customizable value".to_owned(),
+            setting3: "customizable value".to_owned(),
+            slider_value: 50u8,
+            svg_image: egui_extras::RetainedImage::from_svg_bytes_with_size(
+                "scrt.svg",
+                include_bytes!("../assets/scrt.svg"),
+                egui_extras::image::FitTo::Original,
+            )
+            .unwrap(),
             welcome_window_open: true,
             connect_window_open: false,
             alert_window_open: false,
-            side_panel_open: true,
+            right_panel_open: true,
+            left_panel_open: false,
+            style_window_open: false,
         }
     }
 }
@@ -65,18 +77,24 @@ impl eframe::App for TemplateApp {
     /// Put your widgets into a `SidePanel`, `TopPanel`, `CentralPanel`, `Window` or `Area`.
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         let Self {
-            // svg_image: _,
+            setting1,
+            setting2,
+            setting3,
+            slider_value,
+            svg_image: _,
             welcome_window_open,
             connect_window_open,
             alert_window_open,
-            side_panel_open,
+            right_panel_open,
+            left_panel_open,
+            style_window_open,
         } = self;
 
         #[cfg(not(target_arch = "wasm32"))] // no File->Quit on web pages!
         TopBottomPanel::top("top_panel").show(ctx, |ui| {
             // The top panel is often a good place for a menu bar:
             egui::menu::bar(ui, |ui| {
-                egui::widgets::global_dark_light_mode_switch(ui);
+                // egui::widgets::global_dark_light_mode_switch(ui);
                 ui.style_mut().visuals.widgets.hovered.rounding = Rounding::same(0.0);
                 ui.style_mut().visuals.widgets.active.rounding = Rounding::same(0.0);
                 ui.menu_button("File", |ui| {
@@ -85,20 +103,28 @@ impl eframe::App for TemplateApp {
                     if ui.button("Quit").clicked() {
                         _frame.close();
                     };
-                    if ui.button("Organize windows").clicked() {
-                        ui.ctx().memory_mut(|mem| mem.reset_areas());
-                        ui.close_menu();
-                    };
                 });
                 ui.menu_button("View", |ui| {
                     ui.style_mut().visuals.widgets.hovered.rounding = Rounding::same(0.0);
                     ui.style_mut().visuals.widgets.active.rounding = Rounding::same(0.0);
-                    if ui.button("Toggle Sidebar").clicked() {
-                        ui.style_mut().animation_time = 1.0;
-                        *side_panel_open = !*side_panel_open;
+                    if ui.button("Right Side Panel").clicked() {
+                        *right_panel_open = !*right_panel_open;
+                    }
+                    if ui.button("Left Side Panel").clicked() {
+                        *left_panel_open = !*left_panel_open;
+                    }
+                    if ui.button("Style Settings").clicked() {
+                        *style_window_open = true;
+                        ui.close_menu();
                     }
                 });
-                ui.menu_button("Help", |ui| ui.button("Button"));
+                ui.menu_button("Help", |ui| {
+                    ui.style_mut().visuals.widgets.hovered.rounding = Rounding::same(0.0);
+                    ui.style_mut().visuals.widgets.active.rounding = Rounding::same(0.0);
+                    if ui.button("Button").clicked() {
+                        // ...
+                    }
+                });
             });
             Area::new("notification")
                 .anchor(Align2::RIGHT_TOP, Vec2::new(-12.0, 1.0))
@@ -106,7 +132,7 @@ impl eframe::App for TemplateApp {
                     ui.style_mut().wrap = Some(false);
                     ui.style_mut().visuals.hyperlink_color = Color32::from_rgb(242, 176, 70);
                     ui.label(
-                        RichText::new("Notifications will show up here")
+                        RichText::new("Notifications could show up here")
                             .color(Color32::from_rgb(242, 176, 70))
                             .italics(),
                     );
@@ -123,23 +149,25 @@ impl eframe::App for TemplateApp {
                 ui.menu_button("Menu", |ui| {
                     ui.style_mut().visuals.widgets.hovered.rounding = Rounding::same(0.0);
                     ui.style_mut().visuals.widgets.active.rounding = Rounding::same(0.0);
-                    if ui.button("Button").clicked() {
-                        ui.close_menu()
+                    if ui.button("Welcome Message").clicked() {
+                        *welcome_window_open = true;
+                        ui.close_menu();
+                    }
+                    if ui.button("Style Settings").clicked() {
+                        *style_window_open = true;
+                        ui.close_menu();
                     }
                 });
                 ui.menu_button("View", |ui| {
                     ui.style_mut().visuals.widgets.hovered.rounding = Rounding::same(0.0);
                     ui.style_mut().visuals.widgets.active.rounding = Rounding::same(0.0);
-                    if ui.button("Toggle Sidebar").clicked() {
-                        *side_panel_open = !*side_panel_open;
+                    if ui.button("Right Side Panel").clicked() {
+                        *right_panel_open = !*right_panel_open;
+                    }
+                    if ui.button("Left Side Panel").clicked() {
+                        *left_panel_open = !*left_panel_open;
                     }
                 });
-                // ui.horizontal(|ui| {
-                //     ui.add_space(10.0);
-                //     ui.hyperlink("Telegram");
-                //     ui.hyperlink("Twitter");
-                //     ui.hyperlink("Github");
-                // });
             });
             Area::new("notification")
                 .anchor(Align2::RIGHT_TOP, Vec2::new(-12.0, 1.0))
@@ -147,7 +175,7 @@ impl eframe::App for TemplateApp {
                     ui.style_mut().wrap = Some(false);
                     ui.style_mut().visuals.hyperlink_color = Color32::from_rgb(242, 176, 70);
                     ui.link(
-                        RichText::new("Notifications will show up here")
+                        RichText::new("Notifications could show up here")
                             .color(Color32::from_rgb(242, 176, 70))
                             .italics(),
                     );
@@ -164,30 +192,60 @@ impl eframe::App for TemplateApp {
                         "Source code."
                     ));
                     egui::warn_if_debug_build(ui);
+                    ui.small("Use ctrl+shift+R to reset page")
                     // egui::widgets::global_dark_light_mode_buttons(ui);
                 });
                 Area::new("my_area")
-                    .anchor(Align2::RIGHT_BOTTOM, Vec2::new(-8.0, 0.0))
+                    .anchor(Align2::RIGHT_BOTTOM, Vec2::new(-8.0, -4.0))
                     .show(ctx, |ui| {
                         ui.horizontal(|ui| {
                             ui.add(CustomHyperlink::from_label_and_url(
-                                "Telegram",
-                                "https://t.me/AmberDAOscrt",
+                                "Discord",
+                                "about:blank",
                             ));
                             ui.add(CustomHyperlink::from_label_and_url(
                                 "Twitter",
-                                "https://twitter.com/AmberDAO_",
+                                "about:blank",
                             ));
-                            ui.add(CustomHyperlink::from_label_and_url(
-                                "GitHub",
-                                "https://github.com/kent-3/amber",
-                            ));
-                            egui::widgets::global_dark_light_mode_switch(ui);
+                            ui.add(CustomHyperlink::from_label_and_url("GitHub", "about:blank"));
+                            // egui::widgets::global_dark_light_mode_switch(ui);
                         });
                     });
             });
 
-        change_animation_time(ctx, 1.0 / 6.0);
+        change_animation_time(ctx, 1.0 / 6.0); // slower animation for panels looks nice
+
+        SidePanel::left("left_panel")
+            .min_width(350.0)
+            .frame(
+                Frame::side_top_panel(&ctx.style()).inner_margin(Margin::same(10.0)), // .fill(egui::Color32::from_rgb(45, 47, 49)),
+            )
+            .show_animated(ctx, *left_panel_open, |ui| {
+                ui.heading("Side Panel");
+                ui.separator();
+                ui.add_space(10.0);
+
+                ui.style_mut().visuals.widgets.inactive.rounding = Rounding::same(0.0);
+                ui.style_mut().visuals.widgets.hovered.rounding = Rounding::same(0.0);
+                ui.style_mut().visuals.widgets.active.rounding = Rounding::same(0.0);
+
+                ui.horizontal(|ui| {
+                    ui.label("Setting1: ");
+                    ui.text_edit_singleline(setting1);
+                });
+                ui.horizontal(|ui| {
+                    ui.label("Setting2: ");
+                    ui.text_edit_singleline(setting2);
+                });
+                ui.horizontal(|ui| {
+                    ui.label("Setting3: ");
+                    ui.text_edit_singleline(setting3);
+                });
+                ui.horizontal(|ui| {
+                    ui.label("Slider: ");
+                    ui.add(egui::Slider::new(slider_value, 0..=100));
+                });
+            });
 
         SidePanel::right("right_panel")
             .resizable(true)
@@ -195,9 +253,9 @@ impl eframe::App for TemplateApp {
                 Frame::side_top_panel(&ctx.style()).inner_margin(Margin::same(10.0)), // .fill(egui::Color32::from_rgb(45, 47, 49)),
             )
             .max_width(200.0)
-            .show_animated(ctx, *side_panel_open, |ui| {
+            .show_animated(ctx, *right_panel_open, |ui| {
                 ui.vertical_centered(|ui| {
-                    ui.label("SidePanel");
+                    ui.heading("Side Panel");
                     ui.separator();
                     ui.add_space(4.0);
                     if ui.button("Button").clicked() {
@@ -225,20 +283,21 @@ impl eframe::App for TemplateApp {
         CentralPanel::default().show(ctx, |ui| {
             // The central panel is the region left after adding TopPanels and SidePanels
 
+            // Uncomment to add a window to experiment with style settings
+            Window::new("Style Settings")
+                .open(style_window_open)
+                .scroll2([true, true])
+                .show(ctx, |ui| {
+                    ctx.style_ui(ui);
+                });
+
             // Area::new("background_image")
             //     .anchor(Align2::CENTER_CENTER, Vec2::new(0.0, 0.0))
             //     .order(egui::Order::Background)
             //     .show(ctx, |ui| {
-            //         self.svg_image.show_max_size(ui, egui::Vec2 { x: 400.0, y: 400.0 });
+            //         svg_image.show_max_size(ui, egui::Vec2 { x: 400.0, y: 400.0 });
             //     });
 
-            // Uncomment this window to mess with the style settings
-            // Window::new("style settings").default_open(true).scroll2([true,true]).show(ctx, |ui| {
-            //     ctx.style_ui(ui);
-            // });
-
-            // Create a window within the area
-            // .default_pos(egui::pos2(0.0, 0.0))
             Window::new("Welcome Message")
                 .resizable(true)
                 .open(welcome_window_open)
@@ -262,7 +321,7 @@ impl eframe::App for TemplateApp {
                 .show(ctx, |ui| {
                     ui.vertical_centered(|ui| {
                         ui.add_space(20.0);
-                        ui.label(LOREM_IPSUM_SHORT);
+                        ui.label(LOREM_IPSUM_MEDIUM);
                         ui.add_space(20.0);
                     })
                 });
@@ -289,6 +348,7 @@ impl eframe::App for TemplateApp {
 }
 
 pub const LOREM_IPSUM_SHORT: &str = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
+pub const LOREM_IPSUM_MEDIUM: &str = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.";
 pub const LOREM_IPSUM: &str = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
 
 //---------------------------------------------------------------

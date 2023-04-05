@@ -8,13 +8,13 @@ use epaint::{
 };
 
 #[inline]
-pub fn heading2() -> TextStyle {
-    TextStyle::Name("Heading2".into())
+pub fn custom_style_1() -> TextStyle {
+    TextStyle::Name("CustomStyle1".into())
 }
 
 #[inline]
-pub fn heading3() -> TextStyle {
-    TextStyle::Name("ContextHeading".into())
+pub fn custom_style_2() -> TextStyle {
+    TextStyle::Name("CustomStyle2".into())
 }
 
 pub fn my_style() -> Style {
@@ -22,14 +22,17 @@ pub fn my_style() -> Style {
         override_font_id: None,
         override_text_style: None,
         text_styles: [
-            (TextStyle::Heading, FontId::new(18.0, Proportional)),
             (
-                TextStyle::Name("Heading2".into()),
-                FontId::new(22.0, Proportional),
+                TextStyle::Heading,
+                FontId::new(18.0, FontFamily::Name("fira_sans_bold".into())),
             ),
             (
-                TextStyle::Name("ContextHeading".into()),
-                FontId::new(19.0, Proportional),
+                TextStyle::Name("CustomStyle1".into()),
+                FontId::new(22.0, FontFamily::Name("fira_sans_bold".into())),
+            ),
+            (
+                TextStyle::Name("CustomStyle2".into()),
+                FontId::new(22.0, Proportional),
             ),
             (TextStyle::Body, FontId::new(14.0, Proportional)),
             (TextStyle::Monospace, FontId::new(14.0, Monospace)),
@@ -190,6 +193,20 @@ pub fn my_font_definitions() -> FontDefinitions {
         .get_mut(&FontFamily::Monospace)
         .unwrap()
         .push("open_sans".to_owned());
+
+    // Install another font
+    fonts.font_data.insert(
+        "fira_sans_bold".to_owned(),
+        FontData::from_static(include_bytes!("../fonts/FiraSans-Bold.ttf")).tweak(FontTweak {
+            scale: 1.0,
+            y_offset_factor: -0.2,
+            y_offset: 0.0,
+        }),
+    );
+    fonts.families.insert(
+        FontFamily::Name("fira_sans_bold".into()),
+        vec!["fira_sans_bold".to_owned()],
+    );
 
     fonts
 }
